@@ -51,10 +51,12 @@ module Attachments
       end
 
       def store(data_or_io, opts = {})
+        opts[:storage_class] ||= option(:storage_class) if option(:storage_class)
         option(:driver).store(path, data_or_io, container, opts)
       end
 
       def store_multipart(opts = {}, &block)
+        opts[:storage_class] ||= option(:storage_class) if option(:storage_class)
         option(:driver).store_multipart(path, container, opts, &block)
       end
 

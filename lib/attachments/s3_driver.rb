@@ -77,7 +77,6 @@ module Attachments
 
       opts[:content_type] ||= mime_type.content_type if mime_type
       opts[:content_type] ||= "application/octet-stream"
-
       opts[:body] = data_or_io
 
       s3_resource.bucket(bucket).object(name).put(opts)
