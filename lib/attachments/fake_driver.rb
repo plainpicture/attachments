@@ -44,7 +44,7 @@ module Attachments
 
     def store(name, data_or_io, bucket, options = {})
       objects(bucket)[name] = data_or_io.respond_to?(:read) ? data_or_io.read : data_or_io
-    end 
+    end
 
     def store_multipart(name, bucket, options = {}, &block)
       objects(bucket)[name] = FakeMultipartUpload.new(name, bucket, options, &block).data
@@ -52,17 +52,24 @@ module Attachments
 
     def exists?(name, bucket)
       objects(bucket).key?(name)
-    end 
+    end
 
     def delete(name, bucket)
       objects(bucket).delete(name)
-    end 
+    end
+
+    def move_within_bucket(source_name, target_name, bucket)
+      raise ItemNotFound unless exists?(source_name, bucket)
+
+      objects(bucket)[target_name] = value(source_name, bucket)
+      delete(source_name, bucket)
+    end
 
     def value(name, bucket)
       raise(ItemNotFound) unless objects(bucket).key?(name)
 
       objects(bucket)[name]
-    end 
+    end
 
     def temp_url(name, bucket, options = {})
       "https://example.com/#{bucket}/#{name}?signature=signature&expires=expires"
@@ -70,14 +77,14 @@ module Attachments
 
     def flush
       @objects = {}
-    end 
+    end
 
     private
 
     def objects(bucket)
       @objects ||= {}
       @objects[bucket] ||= {}
-    end 
-  end 
+    end
+  end
 end
 

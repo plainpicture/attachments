@@ -54,6 +54,18 @@ RSpec.describe Attachments::FakeDriver do
     end
   end
 
+  it "should move a blob within a bucket" do
+    begin
+      driver.store("source", "blob", "bucket")
+      expect(driver.exists?("source", "bucket")).to be(true)
+      driver.move_within_bucket("source", "target", "bucket")
+      expect(driver.exists?("source", "bucket")).to be(false)
+      expect(driver.exists?("target", "bucket")).to be(true)
+    ensure
+      driver.flush
+    end
+  end
+
   it "should generate a temp_url" do
     expect(driver.temp_url("name", "bucket")).to eq("https://example.com/bucket/name?signature=signature&expires=expires")
   end

@@ -62,8 +62,20 @@ RSpec.describe Attachments::S3Driver do
     end
   end
 
+  it "should move a blob within a bucket" do
+    begin
+      driver.store("source", "blob", "bucket")
+      expect(driver.exists?("source", "bucket")).to be(true)
+      driver.move_within_bucket("source", "target", "bucket")
+      expect(driver.exists?("source", "bucket")).to be(false)
+      expect(driver.exists?("target", "bucket")).to be(true)
+    ensure
+      driver.delete("source", "bucket") if driver.exists?("source", "bucket")
+      driver.delete("target", "bucket") if driver.exists?("target", "bucket")
+    end
+  end
+
   it "should generate a temp_url" do
     expect(driver.temp_url("name", "bucket")).to be_url
   end
 end
-

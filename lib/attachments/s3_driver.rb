@@ -105,6 +105,12 @@ module Attachments
       s3_resource.bucket(bucket).object(name).exists?
     end
 
+    def move_within_bucket(source_name, target_name, bucket)
+      object = s3_resource.bucket(bucket).object(source_name)
+
+      object.move_to(bucket: bucket, key: target_name)
+    end
+
     def temp_url(name, bucket, options = {})
       opts = options.dup
       opts[:expires_in] = opts.delete(:expires_in).to_i if opts.key?(:expires_in)
