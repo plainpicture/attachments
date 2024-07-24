@@ -104,6 +104,15 @@ module Attachments
     def path_for(name, bucket)
       File.join(@base_path, bucket, name)
     end
+
+    def move_within_bucket(source_name, target_name, bucket)
+      source_path = path_for(source_name, bucket)
+      target_path = path_for(target_name, bucket)
+
+      FileUtils.mv(source_path, target_path)
+
+      true
+    end
   end
 end
 
