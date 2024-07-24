@@ -40,5 +40,16 @@ RSpec.describe Attachments::FileDriver do
       driver.delete("name", "bucket")
     end
   end
+  it "should move a blob" do
+    begin
+      driver.store("images/name", "blob", "bucket")
+      expect(driver.exists?("images/name", "bucket")).to be(true)
+      driver.move_within_bucket("images/name", "images/name2", "bucket")
+      expect(driver.exists?("images/name", "bucket")).to be(false)
+      expect(driver.exists?("images/name2", "bucket")).to be(true)
+    ensure
+      driver.delete("images/name2", "bucket")
+    end
+  end
 end
 
